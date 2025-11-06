@@ -520,8 +520,7 @@ element = driver.find_element(By.LINK_TEXT, "Contact Us")
 
 Базовые операции:
 
-python
-```
+```python
 # Ввод текста
 search_field = driver.find_element(By.ID, "search")
 search_field.send_keys("Selenium docs")
@@ -1276,4 +1275,124 @@ def test_invalid_login(browser):
 - Логика страницы изолирована в LoginPage.
 - При изменении локаторов (например, USERNAME_INPUT) правки вносятся только в login_page.py.
 
-​
+# Allure
+
+​Allure — это удобный инструмент для создания отчетов по тестам. Он показывает результаты в понятном виде, помогает анализировать ошибки и улучшать качество кода. Работает с разными языками программирования и фреймворками, поэтому подходит почти для любого проекта.
+Что умеет Allure?
+
+- Наглядные отчеты – графики, диаграммы и детальная информация по каждому тесту.
+- Поддержка разных языков – Java, Python, JavaScript, C# и другие.
+- Интеграция с CI/CD – автоматическая генерация отчетов в Jenkins, GitLab CI и других системах.
+- Разные виды данных в отчетах – шаги тестов, скриншоты, логи, ошибки и многое другое.
+
+Почему Allure полезен?
+
+- Показывает, какие тесты прошли, а какие упали и почему.
+- Помогает быстро находить и чинить баги.
+- Упрощает работу в больших проектах с сотнями тестов.
+
+Итог: Allure делает тестирование прозрачным, а поиск проблем — быстрым. Это must-have инструмент для автоматизаторов! 
+
+Практическое задание
+
+Задача: Написать тест проверки поиска на странице Google с Allure-интеграцией
+Требования:
+
+- Тест переходит на https://google.com
+- Вводит запрос "Allure Framework"
+- Проверяет наличие результатов поиска
+- При падении теста добавляет в отчёт:
+- Скриншот
+- Текущий URL
+- Заголовок страницы
+
+Решение:
+
+```python
+
+import allure 
+from selenium import webdriver 
+from selenium.webdriver.common.by import By 
+
+@allure.suite("Поиск в Google") 
+@allure.title("Поиск информации об Allure Framework") 
+def test_google_search(): 
+    driver = webdriver.Chrome() 
+    driver.get("https://google.com") 
+
+    try: 
+        with allure.step("Ввод поискового запроса"): 
+            search_box = driver.find_element(By.NAME, "q") 
+            search_box.send_keys("Allure Framework") 
+            search_box.submit() 
+
+        with allure.step("Проверка результатов"): 
+            results = driver.find_elements(By.CSS_SELECTOR, "div.g") 
+            assert len(results) > 0, "Нет результатов поиска" 
+
+    except Exception as e: 
+        # Добавляем вложения при ошибке 
+        allure.attach( 
+            driver.get_screenshot_as_png(), 
+            name="search_error", 
+            attachment_type=allure.attachment_type.PNG 
+        ) 
+        allure.attach( 
+            f"URL: {driver.current_url}\nTitle: {driver.title}", 
+            name="page_info", 
+            attachment_type=allure.attachment_type.TEXT 
+        ) 
+        raise e 
+    finally: 
+        driver.quit()
+```
+
+Анализ результата:
+- Запустите тест: pytest test_google.py
+- Сгенерируйте отчёт: allure serve ./allure-results
+
+Сгенерируйте отчёт из результатов тестов
+
+`allure serve allure-results`
+
+Эта команда:
+
+- Сгенерирует отчёт из папки allure-results
+- Запустит локальный веб-сервер с отчётом
+- Откроет отчёт в браузере (обычно на http://localhost:8080)
+
+Дополнительные возможности
+
+- Для постоянного хранения отчётов можно настроить веб-сервер (nginx, Apache) на хостинг папки allure-report
+- Можно автоматизировать процесс генерации и публикации отчётов в CI/CD (Jenkins, GitLab CI и др.)
+
+После этого любой в вашей локальной сети сможет открыть отчёт, перейдя по ссылке http://<ваш-IP-адрес>:8080.
+
+Проверьте:
+
+- Детализацию шагов в "Behaviors"
+- Скриншот и данные при падении
+- Статус теста на главной панели
+
+Итоги урока:
+
+Allure превращает сырые результаты тестов в интерактивную документацию
+
+Ключевые элементы:
+
+- @step для детализации действий
+- attach() для фиксации контекста ошибки
+- Теги для группировки (@tag, @suite)
+
+Отчёт помогает:
+
+- Новичкам понять логику тестов
+- Инженерам диагностировать ошибки
+- Менеджерам отслеживать стабильность продукта
+
+Финал: Настроив Allure один раз, вы сократите время на анализ ошибок на 50-70%!
+
+Дополнительно:
+
+- [Официальная документация](https://docs.qameta.io/allure/)
+
