@@ -61,12 +61,14 @@ import pytest
 - Имена тестовых классов - Должны начинаться с Test (с большой буквы)
 - Имена тестовых функций - Должны начинаться с test_
 
+Добавьте любую pytest метку для теста
+
 в результате должно получиться так:
 
 ```python
 class TestLoginPage:
 
-
+    @pytest.mark.smoke
     def test_login(self):
         driver = webdriver.Chrome()
         try:
@@ -98,7 +100,7 @@ def "test_login(self, login, password, expected_result):"
 3. Добавить перед обьявлением функции параметризацию
 
 ```python
-    @pytest.mark.parametrize("login, password, expected_result",
+    @pytest.mark.parametrize("login, passwd, expected_result",
         [
             ("tomsmith", "SuperSecretPassword!", True), # Валидные данные
             (), # Неправильный пароль
@@ -106,7 +108,7 @@ def "test_login(self, login, password, expected_result):"
     )
 ```
 
-тут сначала мы обозначаем какие переменные мы будем передавать ("login, password, expected_result",), а потом перечисляем конкретные значения этих переменных ("tomsmith", "SuperSecretPassword!", True)
+тут сначала мы обозначаем какие переменные мы будем передавать ("login, passwd, expected_result",), а потом перечисляем конкретные значения этих переменных ("tomsmith", "SuperSecretPassword!", True)
 
 рассмотрим только эти два кейса
 1. Валидные данные
