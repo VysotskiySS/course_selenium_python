@@ -7,8 +7,8 @@
 Для написания локаторов в целях обучения попробовать разные методы, By.ID, By.XPATH и т.п.
 
 1. Установить браузер chrome (обычный, вебдрайвер селениум сам подтянет)
-2. Установить pycharm, создать проект, создать файл py, вставить в файл шаблон решения
-3. Установить selenium через пкм в IDE на строках импорта (from selenium import webdriver)
+2. Установить pycharm, создать проект, создать файл `test_login.py`, вставить в файл шаблон решения представленный ниже
+3. Установить selenium через наведение мыши в IDE на строках импорта (from selenium import webdriver)
 4. Комментарии "# 1." оставляем, требуемый код дописываем ниже каждого комментария
 5. Для проверки текста использовать assert. Есть ньюанс с проверкой текста, добиться именно успешного прохождения, считаем что не баг, а особенность.
 
@@ -78,11 +78,9 @@ class TestLoginPage:
 Написать по аналогии второй тест, пока отдельной функцией `def test_login_invalid(self):`
 Тест на ввод неправильного логина с проверкой сообщения "Your username is invalid!"
 
-Вынести локаторы и прочие общие переменные (wait например) в тело класса, чтобы они в функциях не дублировались
-
 ## Задание 3: Добавление в проект параметризации
 
-Теперь наглядно видно что не смотря на вынос переменных и локаторов - большая часть кода дублируется, уйти от этого нам поможет параметризация
+Теперь наглядно видно что мы получили два теста с одинаковой логикой, большая часть кода в которых совпадает, частично уйти от этого нам поможет параметризация
 
 Следующий шаг обьединить эти два теста в один
 
@@ -90,7 +88,7 @@ class TestLoginPage:
 
 1. Добавить в функцию на вход три параметра 
 
-```
+```python
 def "test_login(self, login, password, expected_result):"
 ```
 
@@ -108,17 +106,138 @@ def "test_login(self, login, password, expected_result):"
     )
 ```
 
-тут сначала мы обозначаем какие переменные мы будем передавать ("login, passwd, expected_result",), а потом перечисляем конкретные значения этих переменных ("tomsmith", "SuperSecretPassword!", True)
+1. Сначала мы обозначаем какие переменные мы будем передавать `"login, passwd, expected_result"`
+2. Затем перечисляем конкретные значения этих переменных `"tomsmith", "SuperSecretPassword!", True`
 
-рассмотрим только эти два кейса
+Рассмотрим только эти два кейса:
 1. Валидные данные
 2. Неправильный логин
-тут есть еще вариант с неправильным паролем и правильным логином, но на нормальных ресурсах не делают отдельное сообщение для таких ситуаций и для этого нужно немного менять подход к параметризации. 
+
+ps: Тут есть еще вариант с неправильным паролем и правильным логином, но на нормальных ресурсах не делают отдельное сообщение для таких ситуаций и для этого нужно немного менять подход к параметризации. 
 
 Что бы выполнять один из двух assert'ов можно использовать "if expected_result:" более наглядно это можно представить как "if expected_result == True" просто более правильное и лаконичное написание
 
 Не забудте учесть что кнопки Logout без успешной авторизации не будет
 
+```python
+import pytest
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+
+
+class TestLoginPage:
+
+    @pytest.mark.smoke
+    def configure_chrome_driver(self):
+        chrome_options = Options()
+
+        # Настройки для отключения сохранения паролей и автозаполнения
+        prefs = {
+            "credentials_enable_service": False,
+            "profile.password_manager_enabled": False,
+            "profile.default_content_setting_values.notifications": 1  # Пример: блокировка уведомлений
+        }
+        chrome_options.add_experimental_option("prefs", prefs)
+
+        driver = webdriver.Chrome(options=chrome_options)
+        return driver
+
+    @pytest.mark.parametrize("login, passwd, expected_result",
+        [
+            ("tomsmith", "SuperSecretPassword!", True), # Валидные данные
+            ("login", "password", False), # Неправильный пароль
+        ])
+    def test_login(self, login, passwd, expected_result):
+
+        driver = self.configure_chrome_driver()
+        try:
+            driver.get("https://the-internet.herokuapp.com/login")
+
+            # 1. Найти поля ввода и кнопку
+            username = driver.find_element(By.ID, "username")
+            password = driver.find_element(By.ID, "password")
+            login_button = driver.find_element(By.TAG_NAME, "button")
+
+            # 2. Ввести учетные данные
+            username.send_keys(login)
+            password.send_keys(passwd)
+
+            # 3. Кликнуть Login
+            login_button.click()
+
+            # 4. Ожидать появления flash-сообщения (id="flash")
+            wait = WebDriverWait(driver, 15)
+            message = wait.until(EC.visibility_of_element_located((By.ID, "flash")))
+
+            # 5. Проверить текст сообщения
+            message_clear = ' '.join(message.text.strip().replace('×', '').split())
+            if expected_result:
+                assert message_clear == "You logged into a secure area!", f'Expected "You logged into a secure area!", got "{message_clear}"'
+
+                # 6. Найти и нажать Logout
+                logout_button = driver.find_element(By.LINK_TEXT, "Logout")
+                logout_button.click()
+            else:
+                assert message_clear == "Your username is invalid!", f'Expected "Your username is invalid!", got "{message_clear}"'
+
+
+        finally:
+            driver.quit()
+```
+
 ## Задание 4: Добавление в проект фикстуры
 
+Мы можем вынести инициализацию и закрытие браузера в фикстуру, используя pytest.
+Создадим фикстуру, которая будет запускать браузер перед каждым тестом и закрывать после.
+
+Создадим фикстуру driver до обьявления класса
+
+```python
+@pytest.fixture
+def driver():
+    # открыть браузер
+    # перейти на страницу
+    yield driver
+    # закрыть браузер после завершения теста
+```
+
+В итоге должно получиться так:
+
+```python
+@pytest.fixture
+def driver():
+    driver = webdriver.Chrome()
+    driver.get("https://the-internet.herokuapp.com/login")
+    yield driver
+    driver.quit()
+```
+
+и теперь нашим тестам нужно сообщить о существовании `driver`
+
+```python
+def test_login(self, driver):
+```
+
+Убедитесь что убрали из тестов все что связано с браузером, т.е. то что описано в фикстуре `driver`
+Весь код фикстуры до `yield` выполнится перед выполнением кода каждого теста
+Весь код фикстуры после `yield` выполнится после выполнения кода каждого теста
+
 ## Задание 5: Изменение структуры проекта по Page Object
+
+Пока у нас в проекте только один файл и один класс, но с ростом кол-ва кода будет рости кол-во кода и это нужно как-то грамотно структурировать.
+
+Создадим файл conftest.py
+
+И вынесем в него фикстуру `driver`
+
+Нужно это что-бы не копировать фикстуру в каждый класс
+
+--
+
+Создадим файл login_page.py
+
+Вынесем в него
+
