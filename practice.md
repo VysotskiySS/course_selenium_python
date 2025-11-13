@@ -401,3 +401,4 @@ from config import WAIT_TIMEOUT
 Allure
 Screenshot
 
+Дебаг + Брейкпоинты в Pycharm
