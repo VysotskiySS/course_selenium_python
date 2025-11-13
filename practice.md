@@ -80,6 +80,33 @@ class TestLoginPage:
 
 Проверьте что у обоих тестов указана одна и та-же метка `@pytest.mark.smoke`
 
+Создайте файл `pytest.ini` в корне проекта и скопируйте в него следующее:
+
+```
+[pytest]
+
+# Указывается шаблон имен файлов для обнаружения тестов
+python_files =
+    test_*.py
+ 
+# Указывается шаблон имен для обнаружения тест-классов
+python_classes = Test*
+
+# Указывается шаблон имен для обнаружения тест-методов
+python_functions = test_*
+
+# Добавление меток (например, для запуска тестов с определёнными метками)
+markers =
+    regress: метки для регресс тестов
+    smoke: метки для smoke-тестов
+
+# Указывает на директорию для хранения временных файлов
+cache_dir = .pytest_cache
+
+# Игнорировать эти директории при поиске тестов
+norecursedirs = .git venv
+```
+
 Запустите тесты через терминал в pycharm командой:
 ```
 pytest -m smoke
@@ -87,7 +114,7 @@ pytest -m smoke
 
 ## Задание 3: Вынос переменных и локаторов элементов из тестов
 
-Теперь когда у нас два теста использующих одни и те-же переменные и локаторы элементов вынесем их из тестов
+Теперь когда у нас два теста использующих одни и те-же переменные и локаторы элементов вынесем их из тестов. Вынесем только то, что обозначено ниже:
 
 ```python
 class TestLoginPage:
@@ -145,6 +172,28 @@ username = driver.find_element(By.ID, "username")
 - Метод find_element ожидает два отдельных аргумента: find_element(by, value)
 - Распаковка преобразует: *(By.ID, "username") → By.ID, "username"
 
+### Опции браузера
+
+При запуске тестов можно столкнуться с сообщениями со стороны браузера которые будут препятствовать успешному прохождению тестов. Как вариант мы можем блокировать уведомления браузера. Создадим для этого функцию для настройки браузера:
+
+```python
+    def configure_chrome_driver(self):
+        chrome_options = Options()
+
+        # Настройки для отключения сохранения паролей и автозаполнения
+        prefs = {
+            "credentials_enable_service": False,
+            "profile.password_manager_enabled": False,
+            "profile.default_content_setting_values.notifications": 1  # Пример: блокировка уведомлений
+        }
+        chrome_options.add_experimental_option("prefs", prefs)
+
+        driver = webdriver.Chrome(options=chrome_options)
+        return driver
+```
+Есть масса других параметров и опций которые нам могут потребоваться, подробно пока останавливаться на них не будем, рассмотрим это немного позже.
+
+
 ## Задание 4: Добавление в проект параметризации
 
 Хоть мы и вынсли переменные из тестов - дублирования кода остается много. 
@@ -198,7 +247,6 @@ from selenium.webdriver.chrome.options import Options
 
 class TestLoginPage:
 
-    @pytest.mark.smoke
     def configure_chrome_driver(self):
         chrome_options = Options()
 
@@ -213,6 +261,7 @@ class TestLoginPage:
         driver = webdriver.Chrome(options=chrome_options)
         return driver
 
+    @pytest.mark.smoke
     @pytest.mark.parametrize("login, passwd, expected_result",
         [
             ("tomsmith", "SuperSecretPassword!", True), # Валидные данные
