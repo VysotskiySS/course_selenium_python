@@ -344,21 +344,82 @@ def test_login(self, driver):
 
 ## Задание 6: Изменение структуры проекта по Page Object
 
-Вынесем конфигурационные параметры и локаторы элементов
+Cоздайте файл login_page.py
 
-Пока у нас в проекте только один файл и один класс, но с ростом кол-ва кода будет рости кол-во кода и это нужно как-то грамотно структурировать.
+В нем создадим класс LoginPage
 
-Создадим файл conftest.py
+Вынесем конфигурационные параметры и локаторы элементов из test_login.py в login_page.py
+
+Фикстуру и BASE_URL пока оставляем в test_login.py
+
+В login_page.py создадим функцию login
+В нее нужно переместить все что находится в функции test_login
+
+переместить часть импортов в login_page.py
+
+```python
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+```
+
+В файл test_login.py импортируем класс LoginPage из login_page
+
+```python
+from login_page import LoginPage
+```
+И вызовем функцию login в тесте
+
+```python
+import pytest
+from selenium import webdriver
+from login_page import LoginPage
+
+
+class TestLoginPage:
+    # Конфигурационные параметры
+    BASE_URL = "https://the-internet.herokuapp.com/login"
+
+    @pytest.fixture
+    def driver(self):
+        driver = webdriver.Chrome()
+        driver.get(self.BASE_URL)
+        yield driver
+        driver.quit()
+
+    @pytest.mark.smoke
+    @pytest.mark.parametrize("login, passwd, expected_result",
+                             [
+                                 ("tomsmith", "SuperSecretPassword!", True),  # Валидные данные
+                                 ("invalid", "SuperSecretPassword!", False),  # Неправильный логин
+                             ]
+                             )
+    def test_login(self, driver, login, passwd, expected_result):
+        page = LoginPage()
+        page.login(driver, login, passwd, expected_result)
+
+```
+
+Cоздайте файл conftest.py
 
 И вынесем в него фикстуру `driver`
 
-Нужно это что-бы не копировать фикстуру в каждый класс
+Cоздайте файл config.py
 
---
+Вынесем в него переменные BASE_URL и WAIT_TIMEOUT
 
-Создадим файл login_page.py
+Добавьте импорты
 
-Вынесем в него
+```
+from config import BASE_URL
+```
+
+```
+from config import WAIT_TIMEOUT
+```
+Там где используются эти переменные, self при из вызове не нужен
+
+Убедитесь что тесты запускаются
 
 ## Задание 7: Написание оберток над функциями selenium и добавление отчетности Allure
 
