@@ -371,33 +371,8 @@ from login_page import LoginPage
 И вызовем функцию login в тесте
 
 ```python
-import pytest
-from selenium import webdriver
-from login_page import LoginPage
-
-
-class TestLoginPage:
-    # Конфигурационные параметры
-    BASE_URL = "https://the-internet.herokuapp.com/login"
-
-    @pytest.fixture
-    def driver(self):
-        driver = webdriver.Chrome()
-        driver.get(self.BASE_URL)
-        yield driver
-        driver.quit()
-
-    @pytest.mark.smoke
-    @pytest.mark.parametrize("login, passwd, expected_result",
-                             [
-                                 ("tomsmith", "SuperSecretPassword!", True),  # Валидные данные
-                                 ("invalid", "SuperSecretPassword!", False),  # Неправильный логин
-                             ]
-                             )
-    def test_login(self, driver, login, passwd, expected_result):
-        page = LoginPage()
-        page.login(driver, login, passwd, expected_result)
-
+page = LoginPage()
+page.login(driver, login, passwd, expected_result)
 ```
 
 Cоздайте файл conftest.py
@@ -419,7 +394,7 @@ from config import WAIT_TIMEOUT
 ```
 Там где используются эти переменные, self при из вызове не нужен
 
-Убедитесь что тесты запускаются
+Убедитесь что тесты запускаются через терминал
 
 ## Задание 7: Написание оберток над функциями selenium и добавление отчетности Allure
 
