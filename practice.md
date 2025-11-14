@@ -172,28 +172,6 @@ username = driver.find_element(By.ID, "username")
 - Метод find_element ожидает два отдельных аргумента: find_element(by, value)
 - Распаковка преобразует: *(By.ID, "username") → By.ID, "username"
 
-### Опции браузера
-
-При запуске тестов можно столкнуться с сообщениями со стороны браузера которые будут препятствовать успешному прохождению тестов. Как вариант мы можем блокировать уведомления браузера. Создадим для этого функцию для настройки браузера:
-
-```python
-    def configure_chrome_driver(self):
-        chrome_options = Options()
-
-        # Настройки для отключения сохранения паролей и автозаполнения
-        prefs = {
-            "credentials_enable_service": False,
-            "profile.password_manager_enabled": False,
-            "profile.default_content_setting_values.notifications": 1  # Пример: блокировка уведомлений
-        }
-        chrome_options.add_experimental_option("prefs", prefs)
-
-        driver = webdriver.Chrome(options=chrome_options)
-        return driver
-```
-Есть масса других параметров и опций которые нам могут потребоваться, подробно пока останавливаться на них не будем, рассмотрим это немного позже.
-
-
 ## Задание 4: Добавление в проект параметризации
 
 Хоть мы и вынсли переменные из тестов - дублирования кода остается много. 
@@ -377,9 +355,43 @@ page.login(driver, login, passwd, expected_result)
 
 Cоздайте файл conftest.py
 
+Тут пока можно не создавать класс
+
 И вынесем в него фикстуру `driver`
 
+### Опции браузера
+
+При запуске тестов можно столкнуться с сообщениями со стороны браузера которые будут препятствовать успешному прохождению тестов. Как вариант мы можем блокировать уведомления браузера. Создадим для этого функцию для настройки браузера
+
+Дополним фикстуру опциями браузера:
+
+```python
+@pytest.fixture
+def driver():
+    """Фикстура для инициализации и закрытия драйвера браузера"""
+    # Сначала создаем опции браузера
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless") # Без графического интерфейса
+    options.add_argument("--ignore-certificate-errors") # Игнорировать ошибки сертификата
+    options.add_argument("--window-size=1920,1080") # Задаем разрешение
+    options.add_argument("--disable-notifications") # Отключаем уведомления браузера
+
+    # Передаем опции при создании драйвера
+    driver = webdriver.Chrome(options=options)
+    driver.maximize_window()
+
+    # Используем get() для открытия страницы
+    driver.get(BASE_URL)
+
+    yield driver
+    driver.quit()
+```
+Есть масса других параметров и опций которые Вам могут потребоваться, можете изучить это самостоятельно.
+
+
 Cоздайте файл config.py
+
+Тут пока можно не создавать класс
 
 Вынесем в него переменные BASE_URL и WAIT_TIMEOUT
 
@@ -398,7 +410,58 @@ from config import WAIT_TIMEOUT
 
 ## Задание 7: Написание оберток над функциями selenium и добавление отчетности Allure
 
-Allure
-Screenshot
+Создайте файл base_page.py
+
+Импортируем Allure
+
+```python
+import allure
+```
+Если навести курсор на слово allure будет предложено установить пакет, сделайте это
+
+Добавьте класс BasePage
+
+И напишем пару функций которые по сути будут обертками над функциями selenium
+
+
+```python
+# base_page.py
+import allure
+
+class BasePage:
+    def __init__(self, driver):
+        self.driver = driver
+
+    def click(self, selector, text=None):
+        element = self.driver.find_element(*selector)
+        if text is not None:
+            with allure.step(f"Клик по элементу '{text}'"):
+                element.click()
+                self.get_screenshot()
+        else:
+            element.click()
+            self.get_screenshot()
+
+    def get_screenshot(self):
+        allure.attach(
+            name="Скриншот",
+            body=self.driver.get_screenshot_as_png(),
+            attachment_type=allure.attachment_type.PNG,
+        )
+```
+
+Рарберем что мы сделали:
+
+Функция get_screenshot делает снимок экрана и передает файл скриншота в allure
+
+В функции click мы принимаем на вход селектор элемента и передаем необязательный текст, используемый для пояснения в allure
+1. Находим элемент
+2. Если есть текст передаем в allure шаг с текстом - Клик по элементу '{text}'
+3. Делаем клик по элементу
+4. Делаем скриншот
+
+Таким образом нам не требуется описывать эти шаги каждый раз когда мы хотим сделать клик по элементу, просто используем написанную нами функцию
+
+Но рано радоваться, теперь нужно еще перестроить проект чтобы было корректное взаимодействие с вебдрайвером
 
 Дебаг + Брейкпоинты в Pycharm
