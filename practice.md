@@ -371,7 +371,7 @@ def driver():
     """Фикстура для инициализации и закрытия драйвера браузера"""
     # Сначала создаем опции браузера
     options = webdriver.ChromeOptions()
-    options.add_argument("--headless") # Без графического интерфейса
+    # options.add_argument("--headless") # Без графического интерфейса
     options.add_argument("--ignore-certificate-errors") # Игнорировать ошибки сертификата
     options.add_argument("--window-size=1920,1080") # Задаем разрешение
     options.add_argument("--disable-notifications") # Отключаем уведомления браузера
@@ -452,6 +452,13 @@ class BasePage:
 
 Рарберем что мы сделали:
 
+Добавили конструктор, принимающий драйвер, и используйте его в методах.
+
+```python
+    def __init__(self, driver):
+        self.driver = driver
+```
+
 Функция get_screenshot делает снимок экрана и передает файл скриншота в allure
 
 В функции click мы принимаем на вход селектор элемента и передаем необязательный текст, используемый для пояснения в allure
@@ -464,4 +471,27 @@ class BasePage:
 
 Но рано радоваться, теперь нужно еще перестроить проект чтобы было корректное взаимодействие с вебдрайвером
 
-Дебаг + Брейкпоинты в Pycharm
+Обновите LoginPage для наследования от BasePage:
+
+Передавайте драйвер в конструктор родительского класса и используйте методы BasePage.
+
+```python
+from base_page import BasePage
+```
+
+Заменим все клики в функции login
+
+```python
+# login_button.click() Заменим старый код
+self.click(self.Locators.LOGIN_BUTTON, 'кнопка [Login]')
+```
+
+
+Обновите тесты для передачи драйвера в LoginPage:
+
+```python
+page = LoginPage(driver)
+```
+
+
+## Задание 8: Дебаг + Брейкпоинты в Pycharm
