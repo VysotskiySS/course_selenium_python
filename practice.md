@@ -493,5 +493,24 @@ self.click(self.Locators.LOGIN_BUTTON, 'кнопка [Login]')
 page = LoginPage(driver)
 ```
 
+Создайте файл `requirements.txt` и добавьте в него:
+
+```
+pytest~=8.3.4
+selenium~=4.27.1
+allure-pytest==2.13.5
+allure-python-commons~=2.13.5
+```
+
+При наведении на содержимое файла будет предложение установить недостающие пакеты, сделайте это.
+
+Запустите выполнение тестов с Allure
+
+```cmd
+pytest -m smoke --alluredir=allure-results
+```
+После прохождения тестов сформируется дирректория которую мы задаем при запуске `allure-results`
+
+Что бы посмотреть отчет выполните команду `allure serve`
 
 ## Задание 8: Дебаг + Брейкпоинты в Pycharm
