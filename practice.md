@@ -172,6 +172,12 @@ username = driver.find_element(By.ID, "username")
 - Метод find_element ожидает два отдельных аргумента: find_element(by, value)
 - Распаковка преобразует: *(By.ID, "username") → By.ID, "username"
 
+Важно! Не все методы ожидают два отдельных аргумента, напримет EC.visibility_of_element_located ожидает один аргумент — локатор в виде кортежа (например, (By.ID, "element")).
+
+```python
+message = wait.until(EC.visibility_of_element_located(self.Locators.FLASH_MESSAGE))
+```
+
 ## Задание 4: Добавление в проект параметризации
 
 Хоть мы и вынсли переменные из тестов - дублирования кода остается много. 
