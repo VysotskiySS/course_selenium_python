@@ -221,30 +221,7 @@ ps: Тут есть еще вариант с неправильным парол
 Не забудте учесть что кнопки Logout без успешной авторизации не будет
 
 ```python
-import pytest
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-
-
-class TestLoginPage:
-
-    def configure_chrome_driver(self):
-        chrome_options = Options()
-
-        # Настройки для отключения сохранения паролей и автозаполнения
-        prefs = {
-            "credentials_enable_service": False,
-            "profile.password_manager_enabled": False,
-            "profile.default_content_setting_values.notifications": 1  # Пример: блокировка уведомлений
-        }
-        chrome_options.add_experimental_option("prefs", prefs)
-
-        driver = webdriver.Chrome(options=chrome_options)
-        return driver
-
+# Внимание! Приведен фрагмент кода с пропусками
     @pytest.mark.smoke
     @pytest.mark.parametrize("login, passwd, expected_result",
         [
@@ -258,9 +235,9 @@ class TestLoginPage:
             driver.get("https://the-internet.herokuapp.com/login")
 
             # 1. Найти поля ввода и кнопку
-            username = driver.find_element(By.ID, "username")
-            password = driver.find_element(By.ID, "password")
-            login_button = driver.find_element(By.TAG_NAME, "button")
+            username = driver.find_element(_______)
+            password = driver.find_element(_______)
+            login_button = driver.find_element(_______)
 
             # 2. Ввести учетные данные
             username.send_keys(login)
@@ -271,7 +248,7 @@ class TestLoginPage:
 
             # 4. Ожидать появления flash-сообщения (id="flash")
             wait = WebDriverWait(driver, 15)
-            message = wait.until(EC.visibility_of_element_located((By.ID, "flash")))
+            message = wait.until(EC.visibility_of_element_located(_________))
 
             # 5. Проверить текст сообщения
             message_clear = ' '.join(message.text.strip().replace('×', '').split())
