@@ -221,7 +221,6 @@ ps: Тут есть еще вариант с неправильным парол
 Не забудте учесть что кнопки Logout без успешной авторизации не будет
 
 ```python
-# Внимание! Приведен фрагмент кода с пропусками
     @pytest.mark.smoke
     @pytest.mark.parametrize("login, passwd, expected_result",
         [
@@ -229,41 +228,8 @@ ps: Тут есть еще вариант с неправильным парол
             ("login", "password", False), # Неправильный пароль
         ])
     def test_login(self, login, passwd, expected_result):
+        # Остальной код
 
-        driver = self.configure_chrome_driver()
-        try:
-            driver.get("https://the-internet.herokuapp.com/login")
-
-            # 1. Найти поля ввода и кнопку
-            username = driver.find_element(_______)
-            password = driver.find_element(_______)
-            login_button = driver.find_element(_______)
-
-            # 2. Ввести учетные данные
-            username.send_keys(login)
-            password.send_keys(passwd)
-
-            # 3. Кликнуть Login
-            login_button.click()
-
-            # 4. Ожидать появления flash-сообщения (id="flash")
-            wait = WebDriverWait(driver, 15)
-            message = wait.until(EC.visibility_of_element_located(_________))
-
-            # 5. Проверить текст сообщения
-            message_clear = ' '.join(message.text.strip().replace('×', '').split())
-            if expected_result:
-                assert message_clear == "You logged into a secure area!", f'Expected "You logged into a secure area!", got "{message_clear}"'
-
-                # 6. Найти и нажать Logout
-                logout_button = driver.find_element(By.LINK_TEXT, "Logout")
-                logout_button.click()
-            else:
-                assert message_clear == "Your username is invalid!", f'Expected "Your username is invalid!", got "{message_clear}"'
-
-
-        finally:
-            driver.quit()
 ```
 
 ## Задание 5: Добавление в проект фикстуры
