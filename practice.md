@@ -199,12 +199,15 @@ def "test_login(self, login, password, expected_result):"
 3. Добавить перед обьявлением функции параметризацию
 
 ```python
+    @pytest.mark.smoke
     @pytest.mark.parametrize("login, passwd, expected_result",
         [
             ("tomsmith", "SuperSecretPassword!", True), # Валидные данные
-            (), # Неправильный пароль
-        ]
-    )
+            ("login", "password", False), # Неправильный пароль
+        ])
+    def test_login(self, login, passwd, expected_result):
+        # Остальной код
+
 ```
 
 1. Сначала мы обозначаем какие переменные мы будем передавать `"login, passwd, expected_result"`
@@ -220,17 +223,6 @@ ps: Тут есть еще вариант с неправильным парол
 
 Не забудте учесть что кнопки Logout без успешной авторизации не будет
 
-```python
-    @pytest.mark.smoke
-    @pytest.mark.parametrize("login, passwd, expected_result",
-        [
-            ("tomsmith", "SuperSecretPassword!", True), # Валидные данные
-            ("login", "password", False), # Неправильный пароль
-        ])
-    def test_login(self, login, passwd, expected_result):
-        # Остальной код
-
-```
 
 ## Задание 5: Добавление в проект фикстуры
 
@@ -269,7 +261,10 @@ def test_login(self, driver):
 
 
 Весь код фикстуры до `yield` выполнится перед выполнением кода каждого теста
-Весь код фикстуры после `yield` выполнится после выполнения кода каждого теста
+Строка `yield driver` передает в тест драйвер
+Весь код фикстуры ниже `yield` выполнится после выполнения кода каждого теста
+
+Разберем подробнее что делает строка `yield driver`:
 
 Когда вы используете фикстуру в pytest, она может предоставлять тестовой функции какие-либо объекты или данные. Для этого фикстура должна вернуть значение. В случае с yield-фикстурой значение, указанное после yield, становится тем, что получит тестовая функция при запросе этой фикстуры.
 
