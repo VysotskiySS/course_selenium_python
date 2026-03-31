@@ -8,6 +8,20 @@
 
 `curl -fsSL https://opencode.ai/install | bash`
 
+MCP Chrome dev tools
+- Создать `opencode.json` в ~/.opencode для глобального применения или в корне проекта для локального
+```
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
+    }
+  }
+}
+```
+
 https://github.com/ChromeDevTools/chrome-devtools-mcp?ysclid=mmyq06omx2432332233
 
 
@@ -20,6 +34,8 @@ https://github.com/openai/codex?ysclid=mne64891v9745151934
 Установка
 
 `npm install -g @openai/codex`
+
+MCP Chrome dev tools
 
 `codex mcp add chrome-devtools -- npx chrome-devtools-mcp@latest`
 
