@@ -31,3 +31,5 @@ https://github.com/openai/codex?ysclid=mne64891v9745151934
 superpowers for Codex: `Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.codex/INSTALL.md`
 
 superpowers for OpenCode: `Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.opencode/INSTALL.md`
+
+`/plugin update superpowers`
