@@ -2,8 +2,6 @@
 
 Агент с бесплатными моделями
 
-Для первого знакомства и теста возможностей
-
 Установка
 
 `curl -fsSL https://opencode.ai/install | bash`
@@ -22,8 +20,7 @@ MCP Chrome dev tools
 }
 ```
 
-https://github.com/ChromeDevTools/chrome-devtools-mcp?ysclid=mmyq06omx2432332233
-
+superpowers for OpenCode: `Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.opencode/INSTALL.md`
 
 ## Codex
 
@@ -39,13 +36,16 @@ MCP Chrome dev tools
 
 `codex mcp add chrome-devtools -- npx chrome-devtools-mcp@latest`
 
+superpowers for Codex: `Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.codex/INSTALL.md`
+
 ## Skills for agents
 
 - https://Github.com/obra/superpowers
 - https://Skills.sh
 
-superpowers for Codex: `Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.codex/INSTALL.md`
+## MCP
+- https://github.com/ChromeDevTools/chrome-devtools-mcp?ysclid=mmyq06omx2432332233
 
-superpowers for OpenCode: `Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.opencode/INSTALL.md`
+## Other commands
 
 `/plugin update superpowers`
