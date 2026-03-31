@@ -20,4 +20,9 @@ https://github.com/openai/codex?ysclid=mne64891v9745151934
 
 `npm install -g @openai/codex`
 
-codex mcp add chrome-devtools -- npx chrome-devtools-mcp@latest
+`codex mcp add chrome-devtools -- npx chrome-devtools-mcp@latest`
+
+## Skills for agents
+
+- https://Github.com/obra/superpowers
+- https://Skills.sh
