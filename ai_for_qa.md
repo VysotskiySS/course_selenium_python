@@ -19,11 +19,9 @@ MCP Chrome dev tools
   }
 }
 ```
-MCP Postgresql
+MCP Postgresql  
 
-Tell OpenCode:  
-
-`opencode mcp add postgres-connection --label "PostgreSQL" --command "npx" --args "-y","@modelcontextprotocol/server-postgres","postgresql://user:pass@host:port/database"` 
+`opencode mcp add postgres-connection --label "PostgreSQL" --command "npx" --args "-y","@modelcontextprotocol/server-postgres","postgresql://user:pass@host:port/database?sslmode=disable"` 
 
 Superpowers for OpenCode
 
