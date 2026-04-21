@@ -20,6 +20,15 @@ MCP Chrome dev tools
 }
 ```
 MCP Postgresql  
+Добавьте в конфиг в блок mcp, заменив user/pass/host/port/database
+
+```
+    "postgres": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-postgres", "postgresql://user:pass@host:port/database?sslmode=disable"]
+    }
+```
+или
 
 `opencode mcp add postgres-connection --label "PostgreSQL" --command "npx" --args "-y","@modelcontextprotocol/server-postgres","postgresql://user:pass@host:port/database?sslmode=disable"` 
 
