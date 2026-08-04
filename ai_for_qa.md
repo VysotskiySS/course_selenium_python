@@ -70,6 +70,10 @@ Tell Codex:
 
 `/plugin update superpowers`
 
+## MiMo-Code
+
+https://github.com/XiaomiMiMo/MiMo-Code?ysclid=msdc3y9ihg478795601
+
 ## Как пользоваться Opencode для написания автотестов
 
 1. Используйте Plane mode (TAB) что бы поставить задачу, внести коррективы и только после этого включайте Build mode.
