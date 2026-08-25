@@ -38,26 +38,6 @@ Tell OpenCode:
 
 `Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.opencode/INSTALL.md`
 
-## Codex
-
-Агент для платной модели OpenAI
-
-https://github.com/openai/codex?ysclid=mne64891v9745151934
-
-Установка
-
-`npm install -g @openai/codex`
-
-MCP Chrome dev tools
-
-`codex mcp add chrome-devtools -- npx chrome-devtools-mcp@latest`
-
-Superpowers for Codex
-
-Tell Codex:
-
-`Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.codex/INSTALL.md`
-
 ## Skills for agents
 
 - https://Github.com/obra/superpowers
